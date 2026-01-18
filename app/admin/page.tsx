@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SupabaseQueueManager, QueueItemClient } from '@/lib/supabaseQueueManager';
 
+// Read environment variables once at module scope
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -39,9 +43,6 @@ export default function AdminPage() {
       // Send SMS notification to the next person in line
       if (followingTicket) {
         try {
-          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-          const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-          
           if (supabaseUrl && supabaseAnonKey) {
             const response = await fetch(`${supabaseUrl}/functions/v1/send-sms`, {
               method: 'POST',
