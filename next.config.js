@@ -2,8 +2,8 @@
 const nextConfig = {
   output: 'export',
   images: { unoptimized: true },
-  basePath: '/mt2.0-queuing-system',
-  assetPrefix: '/mt2.0-queuing-system/',
+  basePath: '/queue',
+  assetPrefix: '/queue/',
   trailingSlash: true,
 };
 
