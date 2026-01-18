@@ -1,12 +1,33 @@
 # Deployment Guide
 
-This guide walks you through deploying the Queue System with Supabase backend.
+This guide walks you through deploying the Queue System with GitHub Pages (frontend) and Supabase (backend).
 
 ## Prerequisites
 
 - Supabase account and project set up (see SUPABASE_SETUP.md)
-- Vercel, Netlify, or another Next.js-compatible hosting account
+- GitHub repository with the code
 - Twilio account for SMS notifications (optional)
+
+## Architecture
+
+```
+┌─────────────────────┐
+│   GitHub Pages      │
+│  (Static Frontend)  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐      ┌──────────────┐
+│     Supabase        │      │   Twilio     │
+│   PostgreSQL        │─────▶│   SMS API    │
+│  (Backend + DB)     │      └──────────────┘
+│  Real-time Updates  │
+└─────────────────────┘
+```
+
+- **Frontend**: Hosted on GitHub Pages as static HTML/CSS/JS
+- **Backend**: Supabase handles all database operations and real-time subscriptions
+- **SMS**: Twilio integration via Supabase Edge Functions (optional)
 
 ## Deployment Steps
 
@@ -17,66 +38,71 @@ Follow the [SUPABASE_SETUP.md](SUPABASE_SETUP.md) guide to:
 - Set up the database schema
 - Configure environment variables
 
-### 2. Deploy to Vercel (Recommended)
+### 2. Deploy to GitHub Pages
 
-Vercel provides the best experience for Next.js applications:
+GitHub Pages provides free static hosting for your frontend:
 
-1. **Connect Your Repository**
-   - Go to [vercel.com](https://vercel.com)
-   - Click "Import Project"
-   - Connect your Git repository
+1. **Enable GitHub Pages**
+   - Go to your repository Settings
+   - Navigate to "Pages" section
+   - Under "Build and deployment":
+     - Source: Select "GitHub Actions"
 
-2. **Configure Environment Variables**
-   - Add your Supabase credentials:
+2. **Configure Repository Secrets**
+   
+   The GitHub Actions workflow needs your Supabase credentials. Add them as repository secrets:
+   
+   - Go to repository Settings → Secrets and variables → Actions
+   - Click "New repository secret" and add:
      ```
-     NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-     NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+     Name: NEXT_PUBLIC_SUPABASE_URL
+     Value: https://your-project.supabase.co
+     
+     Name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+     Value: your-anon-key
      ```
-   - Add Twilio credentials (if using SMS):
+   - Optionally add Twilio credentials (for SMS):
      ```
-     TWILIO_ACCOUNT_SID=your_account_sid
-     TWILIO_AUTH_TOKEN=your_auth_token
-     TWILIO_PHONE_NUMBER=your_phone_number
+     Name: TWILIO_ACCOUNT_SID
+     Value: your_account_sid
+     
+     Name: TWILIO_AUTH_TOKEN
+     Value: your_auth_token
+     
+     Name: TWILIO_PHONE_NUMBER
+     Value: your_phone_number
      ```
 
 3. **Deploy**
-   - Click "Deploy"
-   - Wait for the build to complete
-   - Your app will be live at `https://your-app.vercel.app`
+   - Push your code to the `main` branch
+   - GitHub Actions will automatically build and deploy
+   - Check the "Actions" tab to monitor deployment progress
+   - Once complete, your app will be live at:
+     - `https://[username].github.io/[repository]/`
+     - Or your custom domain if configured
 
-### 3. Alternative: Deploy to Netlify
-
-1. **Connect Your Repository**
-   - Go to [netlify.com](https://netlify.com)
-   - Click "New site from Git"
-   - Connect your repository
-
-2. **Configure Build Settings**
-   - Build command: `npm run build`
-   - Publish directory: `.next`
-
-3. **Set Environment Variables**
-   - Add the same Supabase and Twilio variables as above
-
-4. **Deploy**
-   - Click "Deploy site"
-   - Your app will be live at `https://your-app.netlify.app`
+4. **Verify Deployment**
+   - Visit your GitHub Pages URL
+   - Test ticket creation
+   - Test admin dashboard
+   - Verify real-time updates work
 
 ## Custom Domain
 
-To use a custom domain:
+To use a custom domain with GitHub Pages:
 
-### For Vercel:
-1. Go to your project Settings > Domains
-2. Add your custom domain
-3. Configure DNS according to Vercel's instructions
-4. SSL certificate is automatically provisioned
+1. **Add Custom Domain**
+   - Go to repository Settings → Pages
+   - Under "Custom domain", enter your domain (e.g., `queue.yourdomain.com`)
+   - Click "Save"
 
-### For Netlify:
-1. Go to Domain settings
-2. Add your custom domain
-3. Configure DNS according to Netlify's instructions
-4. SSL certificate is automatically provisioned
+2. **Configure DNS**
+   - Add a CNAME record pointing to `[username].github.io`
+   - Or add A records for GitHub Pages IPs (see [GitHub docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site))
+
+3. **Enable HTTPS**
+   - GitHub automatically provisions SSL certificate
+   - Check "Enforce HTTPS" once certificate is ready
 
 ## Important Notes
 
@@ -86,10 +112,9 @@ The application uses Supabase real-time subscriptions to automatically update th
 
 ### Environment Variables
 
-**Never commit `.env.local` to version control!** Always use environment variable management from your hosting platform:
+**Never commit `.env.local` to version control!** Always use GitHub repository secrets for environment variables:
 
-- **Vercel**: Project Settings > Environment Variables
-- **Netlify**: Site Settings > Environment Variables
+- **GitHub Pages**: Repository Settings → Secrets and variables → Actions
 
 ### Database Setup
 
@@ -133,11 +158,15 @@ Then open http://localhost:3000
 
 ## Continuous Deployment
 
-Both Vercel and Netlify support automatic deployments:
+GitHub Pages supports automatic deployments:
 
 - **Push to main branch** → Automatic production deployment
-- **Push to other branches** → Preview deployments
-- **Pull requests** → Preview deployments for testing
+- **Pull requests** → Preview deployments (if configured)
+
+The included `.github/workflows/deploy.yml` handles:
+- Installing dependencies
+- Building the static site
+- Deploying to GitHub Pages
 
 ## Monitoring and Analytics
 

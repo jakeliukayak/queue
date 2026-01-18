@@ -12,11 +12,11 @@ A modern minimalist queuing system built with Next.js, featuring SMS notificatio
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14+ with App Router, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 14+ with App Router, TypeScript, Tailwind CSS (Static Export)
 - **Backend**: Supabase (PostgreSQL with real-time subscriptions)
 - **Database**: Supabase PostgreSQL
 - **SMS**: Twilio (integration ready)
-- **Hosting**: Vercel or any Next.js-compatible platform
+- **Hosting**: GitHub Pages (frontend) + Supabase (backend)
 
 ## Getting Started
 
@@ -63,21 +63,26 @@ Build the application:
 npm run build
 ```
 
-The build output will be ready for deployment to Vercel, Netlify, or any Next.js-compatible platform.
+The build output will be in the `out/` directory, ready for deployment to GitHub Pages or any static hosting platform.
 
 ## Deployment
 
 ### Production Deployment
 
-For production deployment with Supabase:
+For production deployment with GitHub Pages + Supabase:
 
 1. Set up Supabase project at [supabase.com](https://supabase.com)
 2. Create the database schema (see SUPABASE_SETUP.md)
-3. Configure environment variables with your Supabase credentials
-4. Set up Twilio credentials for SMS notifications
-5. Deploy to Vercel, Netlify, or your preferred Next.js hosting platform
+3. Add Supabase credentials to GitHub repository secrets:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Set up Twilio credentials (optional, for SMS notifications)
+5. Enable GitHub Pages in repository settings
+6. Push to main branch to trigger automatic deployment
 
-See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for detailed instructions.
+The application will automatically build and deploy to GitHub Pages. The frontend is served as static files from GitHub Pages, while all backend operations use Supabase directly from the client.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
 
 ## Admin Access
 

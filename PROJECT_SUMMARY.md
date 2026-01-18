@@ -6,11 +6,12 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
 
 ## What Was Built
 
-### 1. **Frontend Application** (Ready for GitHub Pages)
+### 1. **Frontend Application** (Hosted on GitHub Pages)
    - **Homepage**: Clean landing page with "Get a Ticket" and "Admin Login" buttons
    - **Ticket Page**: Form to collect phone number and generate queue tickets
    - **Admin Dashboard**: Password-protected interface to manage the queue
    - **Responsive Design**: Works seamlessly on mobile and desktop devices
+   - **Static Export**: Built as static HTML/CSS/JS for GitHub Pages hosting
 
 ### 2. **Core Features**
    - ✅ Queue ticket generation with sequential numbering
@@ -22,12 +23,13 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
    - ✅ SMS notification framework (Twilio ready)
 
 ### 3. **Technical Implementation**
-   - **Framework**: Next.js 16 with App Router
+   - **Framework**: Next.js 16 with App Router (Static Export)
    - **Language**: TypeScript for type safety
    - **Styling**: Tailwind CSS v4 with custom utility classes
    - **State Management**: Supabase with real-time subscriptions
    - **Database**: Supabase PostgreSQL
-   - **Build Output**: Optimized for modern hosting platforms
+   - **Build Output**: Static HTML/CSS/JS in `out/` directory
+   - **Hosting**: GitHub Pages (frontend) + Supabase (backend)
 
 ### 4. **Documentation**
    - `README.md`: Complete setup and usage guide
@@ -52,50 +54,63 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
 5. Can remove tickets manually if needed
 6. Dashboard auto-refreshes to show live queue status
 
-## Current Architecture (Development)
+## Current Architecture
 
 ```
-┌─────────────────┐
-│   Next.js App   │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│    Supabase     │
-│   PostgreSQL    │
-│  (Real-time)    │
-└─────────────────┘
+┌─────────────────────┐
+│   GitHub Pages      │
+│  (Static Frontend)  │
+│   HTML/CSS/JS       │
+└──────────┬──────────┘
+           │
+           │ HTTPS/Client-side
+           │
+           ▼
+┌─────────────────────┐
+│     Supabase        │
+│   PostgreSQL DB     │
+│  Real-time Updates  │
+│   (Backend API)     │
+└─────────────────────┘
 ```
 
 **Features:**
-- Real-time database subscriptions
-- PostgreSQL backend
-- Instant updates across clients
+- Static frontend hosted on GitHub Pages (free)
+- Real-time database subscriptions from client
+- PostgreSQL backend on Supabase
+- Instant updates across clients via WebSocket
+- No server required - fully client-side architecture
 - Production-ready from day one
 
 ## Production Architecture
 
 ```
-┌─────────────────┐
-│   Next.js App   │
-│   (Vercel)      │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐      ┌──────────────┐
-│    Supabase     │      │   Twilio     │
-│   PostgreSQL    │─────▶│   SMS API    │
-│  (Real-time)    │      └──────────────┘
-│  Edge Functions │
-└─────────────────┘
+┌─────────────────────┐
+│   GitHub Pages      │
+│  (Static Frontend)  │
+│   HTML/CSS/JS       │
+└──────────┬──────────┘
+           │
+           │ HTTPS/Client-side
+           │
+           ▼
+┌─────────────────────┐      ┌──────────────┐
+│     Supabase        │      │   Twilio     │
+│   PostgreSQL DB     │─────▶│   SMS API    │
+│  Real-time Updates  │      └──────────────┘
+│   Edge Functions    │
+│   (Backend API)     │
+└─────────────────────┘
 ```
 
 **Features:**
-- Scalable cloud infrastructure
+- Free static hosting on GitHub Pages
+- Scalable cloud database on Supabase
 - Real-time updates via WebSocket
-- Real SMS notifications
+- Real SMS notifications via Twilio
 - Persistent queue storage
 - Secure authentication ready
+- No servers to manage
 
 ## Deployment Status
 
@@ -106,9 +121,10 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
 - Production-ready architecture
 
 ### ✅ Ready for Deployment
-- Vercel/Netlify deployment ready
+- GitHub Pages deployment configured
 - Supabase configuration documented
 - Twilio integration documented
+- Static export build verified
 
 ## Key Files
 
@@ -120,7 +136,7 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
 
 ### Configuration
 - `package.json` - Dependencies and scripts
-- `next.config.js` - Static export setup
+- `next.config.js` - Static export configuration
 - `tsconfig.json` - TypeScript config
 - `tailwind.config.js` - Styling config
 
@@ -154,9 +170,10 @@ All features tested and verified:
    - Copy credentials
 
 3. **Deploy Application**
-   - Follow SUPABASE_SETUP.md
-   - Set environment variables
-   - Deploy to Vercel or Netlify
+   - Follow DEPLOYMENT.md guide
+   - Enable GitHub Pages in repository settings
+   - Add environment variables as GitHub secrets
+   - Push to main branch to trigger deployment
 
 4. **Enable Features**
    - Set up Supabase Auth
@@ -199,10 +216,11 @@ All features tested and verified:
 - International: Varies by country
 - Example: 1000 SMS/month = ~$7.50
 
-### Vercel/Netlify
-- **Free** tier available for small projects
+### GitHub Pages
+- **Free** for public repositories
 - Custom domain supported
 - Automatic deployments from Git
+- Unlimited bandwidth for static content
 
 ## Support & Resources
 
