@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+body {
+  background-color: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background-color: #1a1a1a;
+  color: white;
+  border-radius: 0.5rem;
+  transition: background-color 200ms;
+}
+
+.btn-primary:hover {
+  background-color: #374151;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
+  border-radius: 0.5rem;
+  transition: background-color 200ms;
+}
+
+.btn-secondary:hover {
+  background-color: #f3f4f6;
+}
+
+.card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid #e5e7eb;
+}
