@@ -82,7 +82,9 @@ For production deployment with GitHub Pages + Supabase:
 
 The application will automatically build and deploy to GitHub Pages. The frontend is served as static files from GitHub Pages, while all backend operations use Supabase directly from the client.
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+**📖 See the complete step-by-step guide**: [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md)
+
+Also see [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
 
 ## Admin Access
 
