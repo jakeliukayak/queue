@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SupabaseQueueManager, QueueItemClient } from '@/lib/supabaseQueueManager';
 
+// Read environment variables once at module scope
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -36,9 +40,35 @@ export default function AdminPage() {
       const nextTicket = queue[0];
       const followingTicket = await SupabaseQueueManager.callNext();
       
-      // In production, send SMS notification here
+      // Send SMS notification to the next person in line
       if (followingTicket) {
-        console.log(`Would send SMS to ${followingTicket.phoneNumber}: Your turn is next! Ticket #${followingTicket.ticketNumber}`);
+        try {
+          if (supabaseUrl && supabaseAnonKey) {
+            const response = await fetch(`${supabaseUrl}/functions/v1/send-sms`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseAnonKey}`,
+              },
+              body: JSON.stringify({
+                to: followingTicket.phoneNumber,
+                message: `Your turn is next! Ticket #${followingTicket.ticketNumber}`,
+              }),
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              console.log('SMS sent successfully to', followingTicket.phoneNumber);
+            } else {
+              console.error('Failed to send SMS:', result.error);
+            }
+          } else {
+            console.warn('Supabase not configured - SMS not sent');
+          }
+        } catch (smsError) {
+          console.error('Error sending SMS:', smsError);
+        }
       }
       
       await loadQueue();
