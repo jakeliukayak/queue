@@ -27,7 +27,7 @@ export const supabase = createClient(
 export interface QueueItem {
   id: string;
   ticket_number: number;
-  phone_number: string;
+  email: string;
   status: 'waiting' | 'called' | 'completed';
   timestamp: string;
   created_at?: string;

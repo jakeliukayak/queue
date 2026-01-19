@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { SupabaseQueueManager } from '@/lib/supabaseQueueManager';
 
 export default function TicketPage() {
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [ticketNumber, setTicketNumber] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +16,7 @@ export default function TicketPage() {
     setError('');
 
     try {
-      const ticket = await SupabaseQueueManager.addTicket(phoneNumber);
+      const ticket = await SupabaseQueueManager.addTicket(email);
       setTicketNumber(ticket.ticketNumber);
     } catch (err) {
       setError('Failed to get ticket. Please try again.');
@@ -33,9 +33,6 @@ export default function TicketPage() {
             <div className="mb-6">
               <h1 className="text-2xl font-bold mb-2">Your Ticket</h1>
               <div className="text-6xl font-bold my-8">{ticketNumber}</div>
-              <p className="text-gray-600">
-                You will receive an SMS notification when you&apos;re next in line
-              </p>
             </div>
             <Link href="/" className="btn-secondary">
               Back to Home
@@ -54,21 +51,18 @@ export default function TicketPage() {
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                Phone Number
+              <label htmlFor="email" className="block text-sm font-medium mb-2">
+                Email
               </label>
               <input
-                type="tel"
-                id="phone"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="+1234567890"
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your.email@example.com"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Include country code (e.g., +1 for US)
-              </p>
             </div>
 
             {error && (

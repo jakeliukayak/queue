@@ -1,26 +1,25 @@
-# Queue System - Project Summary
+# MT2.0 Queuing System - Project Summary
 
 ## ✅ Implementation Complete
 
-A modern, minimalist queuing system built with Next.js, featuring SMS notifications and admin queue management.
+A modern, minimalist queuing system for scheduling 1-on-1 CV consultation sessions with head coach Jake, built with Next.js and admin queue management.
 
 ## What Was Built
 
 ### 1. **Frontend Application** (Hosted on GitHub Pages)
    - **Homepage**: Clean landing page with "Get a Ticket" and "Admin Login" buttons
-   - **Ticket Page**: Form to collect phone number and generate queue tickets
+   - **Ticket Page**: Form to collect email and generate queue tickets
    - **Admin Dashboard**: Password-protected interface to manage the queue
    - **Responsive Design**: Works seamlessly on mobile and desktop devices
    - **Static Export**: Built as static HTML/CSS/JS for GitHub Pages hosting
 
 ### 2. **Core Features**
    - ✅ Queue ticket generation with sequential numbering
-   - ✅ Phone number collection (with country code support)
+   - ✅ Email collection for contact purposes
    - ✅ Admin authentication (password: admin123)
    - ✅ Call next customer functionality
    - ✅ Remove tickets from queue
    - ✅ Real-time queue status updates
-   - ✅ SMS notification framework (Twilio ready)
 
 ### 3. **Technical Implementation**
    - **Framework**: Next.js 16 with App Router (Static Export)
@@ -42,15 +41,14 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
 ### User Flow
 1. User visits the homepage
 2. Clicks "Get a Ticket"
-3. Enters phone number with country code
+3. Enters email address
 4. Receives ticket number on screen
-5. Gets SMS notification when they're next in line (production with Twilio)
 
 ### Admin Flow
 1. Admin clicks "Admin Login"
 2. Enters password (admin123)
-3. Views all tickets in queue with phone numbers
-4. Clicks "Call Next" to notify next customer
+3. Views all tickets in queue with emails
+4. Clicks "Call Next" to call next customer
 5. Can remove tickets manually if needed
 6. Dashboard auto-refreshes to show live queue status
 
@@ -94,11 +92,10 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
            │ HTTPS/Client-side
            │
            ▼
-┌─────────────────────┐      ┌──────────────┐
-│     Supabase        │      │   Twilio     │
-│   PostgreSQL DB     │─────▶│   SMS API    │
-│  Real-time Updates  │      └──────────────┘
-│   Edge Functions    │
+┌─────────────────────┐
+│     Supabase        │
+│   PostgreSQL DB     │
+│  Real-time Updates  │
 │   (Backend API)     │
 └─────────────────────┘
 ```
@@ -107,7 +104,6 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
 - Free static hosting on GitHub Pages
 - Scalable cloud database on Supabase
 - Real-time updates via WebSocket
-- Real SMS notifications via Twilio
 - Persistent queue storage
 - Secure authentication ready
 - No servers to manage
@@ -123,7 +119,6 @@ A modern, minimalist queuing system built with Next.js, featuring SMS notificati
 ### ✅ Ready for Deployment
 - GitHub Pages deployment configured
 - Supabase configuration documented
-- Twilio integration documented
 - Static export build verified
 
 ## Key Files
@@ -161,26 +156,20 @@ All features tested and verified:
 
 1. **Set up Supabase Project**
    - Create project at supabase.com
-   - Set up database schema
+   - Set up database schema (use email field instead of phone_number)
    - Configure authentication
 
-2. **Configure Twilio**
-   - Sign up at twilio.com
-   - Get phone number
-   - Copy credentials
-
-3. **Deploy Application**
+2. **Deploy Application**
    - Follow DEPLOYMENT.md guide
    - Enable GitHub Pages in repository settings
    - Add environment variables as GitHub secrets
    - Push to main branch to trigger deployment
 
-4. **Enable Features**
+3. **Enable Features**
    - Set up Supabase Auth
    - Configure real-time subscriptions
-   - Enable SMS notifications
 
-5. **Go Live**
+4. **Go Live**
    - Test all features
    - Configure custom domain (optional)
    - Monitor usage and costs
@@ -211,11 +200,6 @@ All features tested and verified:
 - 100,000 monthly active users
 - Daily backups
 
-### Twilio SMS
-- US: ~$0.0075 per message
-- International: Varies by country
-- Example: 1000 SMS/month = ~$7.50
-
 ### GitHub Pages
 - **Free** for public repositories
 - Custom domain supported
@@ -227,7 +211,6 @@ All features tested and verified:
 - **Documentation**: See README.md, SUPABASE_SETUP.md, DEPLOYMENT.md
 - **Next.js Docs**: https://nextjs.org/docs
 - **Supabase Docs**: https://supabase.com/docs
-- **Twilio Docs**: https://www.twilio.com/docs
 - **Tailwind CSS**: https://tailwindcss.com/docs
 
 ## License

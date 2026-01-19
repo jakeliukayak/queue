@@ -7,8 +7,8 @@ export default function Home() {
     <main className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Queue System</h1>
-          <p className="text-gray-600">Modern minimalist queuing solution</p>
+          <h1 className="text-4xl font-bold mb-2">MT2.0 Queuing System</h1>
+          <p className="text-gray-600">Schedule a 1-on-1 CV consultation session with our head coach Jake</p>
         </div>
         
         <div className="space-y-4">
@@ -26,10 +26,7 @@ export default function Home() {
             Admin Login
           </Link>
         </div>
-        
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>You will receive an SMS notification when you&apos;re next in line</p>
-        </div>
+
       </div>
     </main>
   );

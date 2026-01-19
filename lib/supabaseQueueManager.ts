@@ -4,7 +4,7 @@ import { supabase, QueueItem } from './supabase';
 export interface QueueItemClient {
   id: string;
   ticketNumber: number;
-  phoneNumber: string;
+  email: string;
   status: 'waiting' | 'called' | 'completed';
   timestamp: number;
 }
@@ -14,7 +14,7 @@ function toClientFormat(item: QueueItem): QueueItemClient {
   return {
     id: item.id,
     ticketNumber: item.ticket_number,
-    phoneNumber: item.phone_number,
+    email: item.email,
     status: item.status,
     timestamp: new Date(item.timestamp).getTime(),
   };
@@ -22,7 +22,7 @@ function toClientFormat(item: QueueItem): QueueItemClient {
 
 export class SupabaseQueueManager {
   // Add a new ticket to the queue
-  static async addTicket(phoneNumber: string): Promise<QueueItemClient> {
+  static async addTicket(email: string): Promise<QueueItemClient> {
     // Get the current max ticket number
     const { data: maxTicket } = await supabase
       .from('tickets')
@@ -38,7 +38,7 @@ export class SupabaseQueueManager {
       .from('tickets')
       .insert({
         ticket_number: nextTicketNumber,
-        phone_number: phoneNumber,
+        email: email,
         status: 'waiting',
         timestamp: new Date().toISOString(),
       })

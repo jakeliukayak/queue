@@ -1,11 +1,10 @@
-# Queue System
+# MT2.0 Queuing System
 
-A modern minimalist queuing system built with Next.js, featuring SMS notifications and admin queue management.
+A modern minimalist queuing system for scheduling 1-on-1 CV consultation sessions with head coach Jake, built with Next.js and real-time queue management.
 
 ## Features
 
-- **Get a Ticket**: Users can request a queue ticket with their phone number
-- **SMS Notifications**: Receive SMS alerts when you're next in line
+- **Get a Ticket**: Users can request a queue ticket with their email
 - **Admin Panel**: Manage the queue, call next customer, and remove tickets
 - **Real-time Updates**: Queue status updates automatically
 - **Minimalist Design**: Clean, modern interface with Tailwind CSS
@@ -15,7 +14,6 @@ A modern minimalist queuing system built with Next.js, featuring SMS notificatio
 - **Frontend**: Next.js 14+ with App Router, TypeScript, Tailwind CSS (Static Export)
 - **Backend**: Supabase (PostgreSQL with real-time subscriptions)
 - **Database**: Supabase PostgreSQL
-- **SMS**: Twilio (integration ready)
 - **Hosting**: GitHub Pages (frontend) + Supabase (backend)
 
 ## Getting Started
@@ -25,7 +23,6 @@ A modern minimalist queuing system built with Next.js, featuring SMS notificatio
 - Node.js 18+ 
 - npm or yarn
 - Supabase account (for production)
-- Twilio account (for SMS notifications)
 
 ### Installation
 
@@ -45,7 +42,7 @@ npm install
 cp .env.example .env.local
 ```
 
-Edit `.env.local` and add your Supabase and Twilio credentials.
+Edit `.env.local` and add your Supabase credentials.
 
 ### Development
 
@@ -76,9 +73,8 @@ For production deployment with GitHub Pages + Supabase:
 3. Add Supabase credentials to GitHub repository secrets:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Set up Twilio credentials (optional, for SMS notifications)
-5. Enable GitHub Pages in repository settings
-6. Push to main branch to trigger automatic deployment
+4. Enable GitHub Pages in repository settings
+5. Push to main branch to trigger automatic deployment
 
 The application will automatically build and deploy to GitHub Pages. The frontend is served as static files from GitHub Pages, while all backend operations use Supabase directly from the client.
 
@@ -107,8 +103,7 @@ queue/
 │   └── page.tsx        # Home page
 ├── lib/
 │   ├── supabase.ts        # Supabase configuration
-│   ├── supabaseQueueManager.ts  # Queue management with Supabase
-│   └── twilio.ts          # Twilio SMS integration
+│   └── supabaseQueueManager.ts  # Queue management with Supabase
 └── components/         # Reusable components
 ```
 
@@ -120,13 +115,6 @@ queue/
 2. Set up the database schema (see SUPABASE_SETUP.md)
 3. Copy your Supabase URL and anon key to `.env.local`
 4. Update `lib/supabase.ts` with your configuration
-
-### Twilio Setup
-
-1. Create a Twilio account
-2. Get a phone number capable of sending SMS
-3. Copy your Account SID, Auth Token, and phone number to `.env.local`
-4. Update `lib/twilio.ts` for production use
 
 ## Features in Development
 

@@ -7,7 +7,6 @@ This guide explains how to integrate the queuing system with Supabase for produc
 - **Frontend**: Next.js application
 - **Backend**: Supabase (PostgreSQL database with real-time subscriptions)
 - **Database**: Supabase PostgreSQL for queue storage
-- **SMS**: Twilio integration via Supabase Edge Functions or API routes
 
 ## Setup Instructions
 
@@ -27,7 +26,7 @@ Run the following SQL in the Supabase SQL Editor:
 CREATE TABLE tickets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ticket_number INTEGER NOT NULL,
-  phone_number TEXT NOT NULL,
+  email TEXT NOT NULL,
   status TEXT NOT NULL CHECK (status IN ('waiting', 'called', 'completed')),
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -63,11 +62,6 @@ Create a `.env.local` file in your project root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-
-# Twilio Configuration (for SMS notifications)
-TWILIO_ACCOUNT_SID=your_twilio_account_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
-TWILIO_PHONE_NUMBER=your_twilio_phone_number
 ```
 
 You can find your Supabase URL and anon key in:
@@ -81,81 +75,7 @@ To enable real-time updates for the admin dashboard:
 2. Enable replication for the `tickets` table
 3. The app will automatically subscribe to changes
 
-### 5. Set Up Twilio for SMS Notifications
-
-#### Option 1: Supabase Edge Functions (Recommended)
-
-Create a Supabase Edge Function for sending SMS:
-
-```bash
-# Install Supabase CLI
-npm install -g supabase
-
-# Login to Supabase
-supabase login
-
-# Link to your project
-supabase link --project-ref your-project-ref
-
-# Create edge function
-supabase functions new send-sms
-```
-
-Edit `supabase/functions/send-sms/index.ts`:
-
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const TWILIO_ACCOUNT_SID = Deno.env.get('TWILIO_ACCOUNT_SID');
-const TWILIO_AUTH_TOKEN = Deno.env.get('TWILIO_AUTH_TOKEN');
-const TWILIO_PHONE_NUMBER = Deno.env.get('TWILIO_PHONE_NUMBER');
-
-serve(async (req) => {
-  const { to, message } = await req.json();
-
-  const auth = btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`);
-  
-  const response = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        To: to,
-        From: TWILIO_PHONE_NUMBER!,
-        Body: message,
-      }),
-    }
-  );
-
-  const data = await response.json();
-  
-  return new Response(JSON.stringify(data), {
-    headers: { 'Content-Type': 'application/json' },
-  });
-});
-```
-
-Deploy the function:
-
-```bash
-# Set secrets
-supabase secrets set TWILIO_ACCOUNT_SID=your_account_sid
-supabase secrets set TWILIO_AUTH_TOKEN=your_auth_token
-supabase secrets set TWILIO_PHONE_NUMBER=your_phone_number
-
-# Deploy
-supabase functions deploy send-sms
-```
-
-#### Option 2: Next.js API Route
-
-Keep the Twilio integration in your Next.js API routes (server-side only).
-
-### 6. Security Recommendations for Production
+### 5. Security Recommendations for Production
 
 1. **Row Level Security**: Update RLS policies to restrict access:
 
@@ -197,7 +117,7 @@ await supabase.auth.signOut();
 
 3. **Environment Variables**: Never commit `.env.local` to version control.
 
-### 7. Testing Your Setup
+### 6. Testing Your Setup
 
 1. Start the development server:
 ```bash
@@ -233,17 +153,11 @@ No polling is required - updates are pushed instantly via WebSocket.
 - 100,000 monthly active users
 - Daily backups
 
-### Twilio SMS
-- US: ~$0.0075 per message
-- International: Varies by country
-- Example: 1000 SMS/month = ~$7.50
-
 ## Monitoring
 
 - **Database**: Monitor in Supabase Dashboard → Database → Performance
 - **API Logs**: Check API logs in Dashboard → Logs
 - **Real-time**: Monitor real-time connections in Dashboard → Database → Replication
-- **Edge Functions**: View function logs in Dashboard → Edge Functions
 
 ## Troubleshooting
 
@@ -256,11 +170,6 @@ No polling is required - updates are pushed instantly via WebSocket.
 1. Verify RLS policies allow the operation
 2. Check if table schema matches the application code
 3. Review Supabase logs for errors
-
-### SMS not sending
-1. Verify Twilio credentials are correct
-2. Check Edge Function logs for errors
-3. Ensure phone numbers include country code
 
 ## Migration from Firebase
 
@@ -275,14 +184,12 @@ If you're migrating from Firebase:
 ## Next Steps
 
 1. Implement Supabase Auth for secure admin access
-2. Add webhook support for Twilio delivery status
-3. Implement queue analytics using Supabase queries
-4. Set up scheduled functions for cleanup tasks
-5. Configure database backups
+2. Implement queue analytics using Supabase queries
+3. Set up scheduled functions for cleanup tasks
+4. Configure database backups
 
 ## Resources
 
 - [Supabase Documentation](https://supabase.com/docs)
 - [Supabase Real-time](https://supabase.com/docs/guides/realtime)
 - [Supabase Edge Functions](https://supabase.com/docs/guides/functions)
-- [Twilio SMS API](https://www.twilio.com/docs/sms)
