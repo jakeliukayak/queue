@@ -21,7 +21,7 @@ First, obtain your Supabase credentials:
 
 Now add these credentials as GitHub repository secrets:
 
-1. Go to your GitHub repository: `https://github.com/jakeliukayak/queue`
+1. Go to your GitHub repository (e.g., `https://github.com/USERNAME/REPOSITORY`)
 2. Click on **Settings** (repository settings, not your profile)
 3. In the left sidebar, click **Secrets and variables** → **Actions**
 4. Click the **New repository secret** button
@@ -74,8 +74,9 @@ Or manually trigger from GitHub:
 3. Monitor the build process
 4. Once complete, your site will be live at:
    ```
-   https://jakeliukayak.github.io/queue/
+   https://USERNAME.github.io/REPOSITORY/
    ```
+   (Replace USERNAME with your GitHub username and REPOSITORY with your repo name)
 
 ## How It Works
 
@@ -108,12 +109,20 @@ During the build process:
 
 ### What about the admin password?
 
-⚠️ The current implementation uses a hardcoded admin password (`admin123`). For production:
-1. Implement Supabase Authentication
-2. Use proper user roles and permissions
-3. Never hardcode passwords
+🚨 **CRITICAL SECURITY WARNING**: The current implementation uses a hardcoded admin password (`admin123`). This is **NOT SAFE for production use**.
 
-See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for instructions on implementing proper authentication.
+**Before deploying to production, you MUST:**
+1. Implement Supabase Authentication (see [SUPABASE_SETUP.md](SUPABASE_SETUP.md))
+2. Use proper user roles and permissions with Row Level Security
+3. Remove all hardcoded passwords from the codebase
+4. Never expose admin credentials in client-side code
+
+**The current setup is only suitable for:**
+- Development and testing
+- Internal demos
+- Proof-of-concept deployments
+
+See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for detailed instructions on implementing proper authentication.
 
 ## Troubleshooting
 
