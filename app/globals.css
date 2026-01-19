@@ -13,6 +13,8 @@
   --border-color: #dadce0;
   --background: #ffffff;
   --surface: #f8f9fa;
+  --button-primary: #2fcea1;
+  --button-primary-hover: #29b894;
 }
 
 /* Fade-in animation for smooth transitions */
@@ -39,7 +41,7 @@ body {
 
 .btn-primary {
   padding: 0.75rem 1.5rem;
-  background-color: #2fcea1;
+  background-color: var(--button-primary);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -48,7 +50,7 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #29b894;
+  background-color: var(--button-primary-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(47, 206, 161, 0.4);
 }
