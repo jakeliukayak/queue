@@ -70,7 +70,7 @@ The application now uses a PostgreSQL table with the following schema:
 CREATE TABLE tickets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ticket_number INTEGER NOT NULL,
-  phone_number TEXT NOT NULL,
+  email TEXT NOT NULL,
   status TEXT NOT NULL CHECK (status IN ('waiting', 'called', 'completed')),
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()

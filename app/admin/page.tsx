@@ -36,11 +36,6 @@ export default function AdminPage() {
       const nextTicket = queue[0];
       const followingTicket = await SupabaseQueueManager.callNext();
       
-      // In production, send SMS notification here
-      if (followingTicket) {
-        console.log(`Would send SMS to ${followingTicket.phoneNumber}: Your turn is next! Ticket #${followingTicket.ticketNumber}`);
-      }
-      
       await loadQueue();
     } catch (err) {
       console.error('Failed to call next:', err);
@@ -167,7 +162,7 @@ export default function AdminPage() {
                 >
                   <div>
                     <p className="font-bold text-lg">#{item.ticketNumber}</p>
-                    <p className="text-sm text-gray-600">{item.phoneNumber}</p>
+                    <p className="text-sm text-gray-600">{item.email}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {index === 0 && (
