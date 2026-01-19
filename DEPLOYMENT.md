@@ -6,7 +6,6 @@ This guide walks you through deploying the Queue System with GitHub Pages (front
 
 - Supabase account and project set up (see SUPABASE_SETUP.md)
 - GitHub repository with the code
-- Twilio account for SMS notifications (optional)
 
 ## Architecture
 
@@ -17,17 +16,16 @@ This guide walks you through deploying the Queue System with GitHub Pages (front
 └──────────┬──────────┘
            │
            ▼
-┌─────────────────────┐      ┌──────────────┐
-│     Supabase        │      │   Twilio     │
-│   PostgreSQL        │─────▶│   SMS API    │
-│  (Backend + DB)     │      └──────────────┘
+┌─────────────────────┐
+│     Supabase        │
+│   PostgreSQL        │
+│  (Backend + DB)     │
 │  Real-time Updates  │
 └─────────────────────┘
 ```
 
 - **Frontend**: Hosted on GitHub Pages as static HTML/CSS/JS
 - **Backend**: Supabase handles all database operations and real-time subscriptions
-- **SMS**: Twilio integration via Supabase Edge Functions (optional)
 
 ## Deployment Steps
 
@@ -60,17 +58,6 @@ GitHub Pages provides free static hosting for your frontend:
      
      Name: NEXT_PUBLIC_SUPABASE_ANON_KEY
      Value: your-anon-key
-     ```
-   - Optionally add Twilio credentials (for SMS):
-     ```
-     Name: TWILIO_ACCOUNT_SID
-     Value: your_account_sid
-     
-     Name: TWILIO_AUTH_TOKEN
-     Value: your_auth_token
-     
-     Name: TWILIO_PHONE_NUMBER
-     Value: your_phone_number
      ```
 
 3. **Deploy**

@@ -57,18 +57,6 @@ Add your Supabase credentials as GitHub repository secrets:
    Value: your-supabase-anon-key-here
    ```
 
-5. (Optional) Add Twilio secrets for SMS:
-   ```
-   Name: TWILIO_ACCOUNT_SID
-   Value: your-twilio-account-sid
-   
-   Name: TWILIO_AUTH_TOKEN
-   Value: your-twilio-auth-token
-   
-   Name: TWILIO_PHONE_NUMBER
-   Value: your-twilio-phone-number
-   ```
-
 ### 3. Enable GitHub Pages
 
 1. Go to your repository **Settings**
@@ -119,7 +107,7 @@ All database operations happen directly from the browser to Supabase:
 
 ```typescript
 // This runs in the browser
-const ticket = await SupabaseQueueManager.addTicket(phoneNumber);
+const ticket = await SupabaseQueueManager.addTicket(email);
 ```
 
 The browser makes HTTPS requests to:
@@ -256,9 +244,8 @@ https://username.github.io/
 2. ✅ Test your live site
 3. ⚠️ Change admin password (default: `admin123`)
 4. 🔒 Implement Supabase Authentication (see SUPABASE_SETUP.md)
-5. 📱 Set up Twilio for SMS notifications
-6. 🎨 Customize the design
-7. 📊 Add analytics (Google Analytics, Plausible, etc.)
+5. 🎨 Customize the design
+6. 📊 Add analytics (Google Analytics, Plausible, etc.)
 
 ## Security Notes
 
