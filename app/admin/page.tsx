@@ -9,6 +9,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [queue, setQueue] = useState<QueueItemClient[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
@@ -25,6 +26,12 @@ export default function AdminPage() {
   const loadQueue = async () => {
     const currentQueue = await SupabaseQueueManager.getWaitingQueue();
     setQueue(currentQueue);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadQueue();
+    setRefreshing(false);
   };
 
   const handleNext = async () => {
@@ -119,15 +126,24 @@ export default function AdminPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Queue Management</h1>
-          <button 
-            onClick={() => {
-              setIsAuthenticated(false);
-              setPassword('');
-            }}
-            className="btn-secondary"
-          >
-            Logout
-          </button>
+          <div className="flex gap-2">
+            <button 
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-secondary disabled:opacity-50"
+            >
+              🔄 Refresh
+            </button>
+            <button 
+              onClick={() => {
+                setIsAuthenticated(false);
+                setPassword('');
+              }}
+              className="btn-secondary"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="card mb-6">
@@ -160,8 +176,10 @@ export default function AdminPage() {
                     index === 0 ? 'bg-blue-50 border-2 border-blue-200' : 'bg-gray-50'
                   }`}
                 >
-                  <div>
+                  <div className="flex-1">
                     <p className="font-bold text-lg">#{item.ticketNumber}</p>
+                    <p className="font-semibold text-gray-900">{item.name}</p>
+                    <p className="text-sm text-gray-600">{item.phoneNumber}</p>
                     <p className="text-sm text-gray-600">{item.email}</p>
                   </div>
                   <div className="flex items-center gap-2">
