@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { SupabaseQueueManager } from '@/lib/supabaseQueueManager';
+import { SupabaseQueueManager, QueueItemClient } from '@/lib/supabaseQueueManager';
 
 export default function TicketPage() {
   const [name, setName] = useState('');
@@ -14,14 +14,18 @@ export default function TicketPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
+  const updateCurrentTicket = (queue: QueueItemClient[]) => {
+    if (queue.length > 0) {
+      setCurrentTicket(queue[0].ticketNumber);
+    } else {
+      setCurrentTicket(null);
+    }
+  };
+
   const loadCurrentTicket = async () => {
     try {
       const queue = await SupabaseQueueManager.getWaitingQueue();
-      if (queue.length > 0) {
-        setCurrentTicket(queue[0].ticketNumber);
-      } else {
-        setCurrentTicket(null);
-      }
+      updateCurrentTicket(queue);
     } catch (err) {
       console.error('Failed to load current ticket:', err);
     }
@@ -39,13 +43,7 @@ export default function TicketPage() {
       loadCurrentTicket();
 
       // Set up real-time subscription
-      const unsubscribe = SupabaseQueueManager.subscribeToQueue((updatedQueue) => {
-        if (updatedQueue.length > 0) {
-          setCurrentTicket(updatedQueue[0].ticketNumber);
-        } else {
-          setCurrentTicket(null);
-        }
-      });
+      const unsubscribe = SupabaseQueueManager.subscribeToQueue(updateCurrentTicket);
 
       return () => {
         unsubscribe();

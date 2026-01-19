@@ -42,9 +42,9 @@ export class SupabaseQueueManager {
       .from('tickets')
       .insert({
         ticket_number: nextTicketNumber,
-        name: name,
+        name,
         phone_number: phoneNumber,
-        email: email,
+        email,
         status: 'waiting',
         timestamp: new Date().toISOString(),
       })
