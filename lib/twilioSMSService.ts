@@ -65,19 +65,22 @@ export class TwilioSMSService {
    * This is a simple helper - in production, use a library like libphonenumber-js
    */
   static formatPhoneNumber(phoneNumber: string): string {
+    // If it already starts with +, return as is
+    if (phoneNumber.startsWith('+')) {
+      return phoneNumber;
+    }
+    
     // Remove all non-digit characters
     const digits = phoneNumber.replace(/\D/g, '');
     
-    // If it doesn't start with +, add + and assume US country code if 10 digits
-    if (!phoneNumber.startsWith('+')) {
-      if (digits.length === 10) {
-        return `+1${digits}`;
-      } else if (digits.length === 11 && digits.startsWith('1')) {
-        return `+${digits}`;
-      }
+    // Add + and assume US country code if 10 digits
+    if (digits.length === 10) {
+      return `+1${digits}`;
+    } else if (digits.length === 11 && digits.startsWith('1')) {
       return `+${digits}`;
     }
     
-    return phoneNumber;
+    // Default: just add + prefix
+    return `+${digits}`;
   }
 }
