@@ -21,6 +21,13 @@ export default function Home() {
             </Link>
             
             <Link 
+              href="/search" 
+              className="block btn-secondary text-center"
+            >
+              Search Reservation
+            </Link>
+            
+            <Link 
               href="/admin" 
               className="block btn-secondary text-center"
             >

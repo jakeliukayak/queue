@@ -1,6 +1,7 @@
 // Supabase-based queue management
 import { supabase, QueueItem } from './supabase';
 import { TwilioSMSService } from './twilioSMSService';
+import { EmailService } from './emailService';
 
 export interface QueueItemClient {
   id: string;
@@ -133,10 +134,10 @@ export class SupabaseQueueManager {
       // Continue execution even if SMS fails
     }
 
-    // Get the ticket after this one to notify
+    // Get the ticket after this one (position 1 - next in line)
     const followingTicket = waitingQueue.length > 1 ? waitingQueue[1] : null;
 
-    // Send SMS notification to the next customer in line
+    // Send notifications to the next customer in line (position 1)
     if (followingTicket) {
       try {
         const formattedPhone = TwilioSMSService.formatPhoneNumber(followingTicket.phoneNumber);
@@ -149,6 +150,35 @@ export class SupabaseQueueManager {
         console.error('Failed to send SMS to next customer:', error);
         // Continue execution even if SMS fails
       }
+
+      // Send email notification to next customer (position 1)
+      try {
+        await EmailService.notifyNextInLine(
+          followingTicket.name,
+          followingTicket.email,
+          followingTicket.ticketNumber
+        );
+      } catch (error) {
+        console.error('Failed to send email to next customer:', error);
+        // Continue execution even if email fails
+      }
+    }
+
+    // Get the ticket at position 3 (index 2)
+    const position3Ticket = waitingQueue.length > 2 ? waitingQueue[2] : null;
+
+    // Send email notification to customer at position 3
+    if (position3Ticket) {
+      try {
+        await EmailService.notifyPosition3(
+          position3Ticket.name,
+          position3Ticket.email,
+          position3Ticket.ticketNumber
+        );
+      } catch (error) {
+        console.error('Failed to send email to position 3 customer:', error);
+        // Continue execution even if email fails
+      }
     }
 
     // Remove the called ticket after a brief delay to allow UI updates
@@ -158,6 +188,39 @@ export class SupabaseQueueManager {
     }, TICKET_REMOVAL_DELAY_MS);
 
     return followingTicket;
+  }
+
+  // Get the most recently called ticket
+  static async getCalledTicket(): Promise<QueueItemClient | null> {
+    const { data, error } = await supabase
+      .from('tickets')
+      .select('*')
+      .eq('status', 'called')
+      .order('timestamp', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return toClientFormat(data);
+  }
+
+  // Search for tickets by phone number
+  static async searchByPhone(phoneNumber: string): Promise<QueueItemClient[]> {
+    const { data, error } = await supabase
+      .from('tickets')
+      .select('*')
+      .eq('phone_number', phoneNumber)
+      .order('timestamp', { ascending: false });
+
+    if (error) {
+      console.error('Error searching by phone:', error);
+      return [];
+    }
+
+    return (data || []).map(toClientFormat);
   }
 
   // Subscribe to real-time queue changes
