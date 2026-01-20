@@ -43,6 +43,9 @@ supabase link --project-ref your-project-ref
 
 # Set the Resend API key as a secret
 supabase secrets set RESEND_API_KEY=re_your_api_key_here
+
+# Optional: Set a custom sender email (defaults to onboarding@resend.dev)
+supabase secrets set EMAIL_FROM="MT2.0 Queue <noreply@yourdomain.com>"
 ```
 
 #### Step 2: Deploy the Edge Function
@@ -65,11 +68,14 @@ By default, emails are sent from `onboarding@resend.dev`. For production:
    - Add the provided DNS records to your domain
    - Wait for verification (usually 5-10 minutes)
 
-3. **Update the Edge Function**:
-   - Edit `supabase/functions/send-email/index.ts`
-   - Change the `from` field:
-     ```typescript
-     from: 'MT2.0 Queue <noreply@yourdomain.com>',
+3. **Update the Supabase Secret**:
+   - Set the EMAIL_FROM environment variable:
+     ```bash
+     supabase secrets set EMAIL_FROM="MT2.0 Queue <noreply@yourdomain.com>"
+     ```
+   - Redeploy the edge function:
+     ```bash
+     supabase functions deploy send-email
      ```
 
 ## Email Templates

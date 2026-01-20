@@ -2,6 +2,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+const EMAIL_FROM = Deno.env.get('EMAIL_FROM') || 'MT2.0 Queue <onboarding@resend.dev>'
 
 interface EmailRequest {
   to: string
@@ -58,7 +59,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'MT2.0 Queue <onboarding@resend.dev>',
+        from: EMAIL_FROM,
         to: [to],
         subject: subject,
         html: html,

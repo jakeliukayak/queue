@@ -134,7 +134,7 @@ export class SupabaseQueueManager {
       // Continue execution even if SMS fails
     }
 
-    // Get the ticket after this one (position 1 - next in line)
+    // Get the ticket after this one (will become position 1 - next in line)
     const followingTicket = waitingQueue.length > 1 ? waitingQueue[1] : null;
 
     // Send notifications to the next customer in line (position 1)

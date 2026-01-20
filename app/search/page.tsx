@@ -4,9 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { SupabaseQueueManager, QueueItemClient } from '@/lib/supabaseQueueManager';
 
+interface QueueItemWithPosition extends QueueItemClient {
+  position: number | null;
+}
+
 export default function SearchPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [results, setResults] = useState<QueueItemClient[]>([]);
+  const [results, setResults] = useState<QueueItemWithPosition[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
@@ -37,12 +41,12 @@ export default function SearchPage() {
       const waitingQueue = await SupabaseQueueManager.getWaitingQueue();
       
       // Add position information
-      const ticketsWithPositions = tickets.map((ticket) => ({
+      const ticketsWithPositions: QueueItemWithPosition[] = tickets.map((ticket) => ({
         ...ticket,
         position: getPosition(ticket, waitingQueue),
       }));
 
-      setResults(ticketsWithPositions as any);
+      setResults(ticketsWithPositions);
     } catch (err) {
       setError('Failed to search. Please try again.');
       setResults([]);
@@ -115,7 +119,7 @@ export default function SearchPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {results.map((result: any) => (
+                  {results.map((result) => (
                     <div
                       key={result.id}
                       className="bg-gray-50 p-6 rounded-lg border border-gray-200"
