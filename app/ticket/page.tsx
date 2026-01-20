@@ -14,18 +14,14 @@ export default function TicketPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
-  const updateCurrentTicket = (queue: QueueItemClient[]) => {
-    if (queue.length > 0) {
-      setCurrentTicket(queue[0].ticketNumber);
-    } else {
-      setCurrentTicket(null);
-    }
-  };
-
   const loadCurrentTicket = async () => {
     try {
-      const queue = await SupabaseQueueManager.getWaitingQueue();
-      updateCurrentTicket(queue);
+      const calledTicket = await SupabaseQueueManager.getCalledTicket();
+      if (calledTicket) {
+        setCurrentTicket(calledTicket.ticketNumber);
+      } else {
+        setCurrentTicket(null);
+      }
     } catch (err) {
       console.error('Failed to load current ticket:', err);
     }
@@ -42,8 +38,10 @@ export default function TicketPage() {
       // Load initial current ticket
       loadCurrentTicket();
 
-      // Set up real-time subscription
-      const unsubscribe = SupabaseQueueManager.subscribeToQueue(updateCurrentTicket);
+      // Set up real-time subscription to refresh when queue changes
+      const unsubscribe = SupabaseQueueManager.subscribeToQueue(() => {
+        loadCurrentTicket();
+      });
 
       return () => {
         unsubscribe();
