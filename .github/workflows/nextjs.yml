@@ -80,6 +80,9 @@ jobs:
           # Settings → Secrets and variables → Actions → New repository secret
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Twilio configuration for SMS notifications
+          # The Twilio credentials are used by Supabase Edge Functions, not the Next.js build
+          # You still need to configure them in Supabase Dashboard → Edge Functions → Secrets
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,5 +1,6 @@
 // Supabase-based queue management
 import { supabase, QueueItem } from './supabase';
+import { TwilioSMSService } from './twilioSMSService';
 
 export interface QueueItemClient {
   id: string;
@@ -119,8 +120,36 @@ export class SupabaseQueueManager {
     const nextTicket = waitingQueue[0];
     await this.updateTicketStatus(nextTicket.id, 'called');
 
+    // Send SMS notification to the customer being called
+    try {
+      const formattedPhone = TwilioSMSService.formatPhoneNumber(nextTicket.phoneNumber);
+      await TwilioSMSService.notifyCustomerTurn(
+        nextTicket.name,
+        formattedPhone,
+        nextTicket.ticketNumber
+      );
+    } catch (error) {
+      console.error('Failed to send SMS to current customer:', error);
+      // Continue execution even if SMS fails
+    }
+
     // Get the ticket after this one to notify
     const followingTicket = waitingQueue.length > 1 ? waitingQueue[1] : null;
+
+    // Send SMS notification to the next customer in line
+    if (followingTicket) {
+      try {
+        const formattedPhone = TwilioSMSService.formatPhoneNumber(followingTicket.phoneNumber);
+        await TwilioSMSService.notifyCustomerNext(
+          followingTicket.name,
+          formattedPhone,
+          followingTicket.ticketNumber
+        );
+      } catch (error) {
+        console.error('Failed to send SMS to next customer:', error);
+        // Continue execution even if SMS fails
+      }
+    }
 
     // Remove the called ticket after a brief delay to allow UI updates
     const TICKET_REMOVAL_DELAY_MS = 1000;
