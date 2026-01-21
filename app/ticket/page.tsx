@@ -10,11 +10,14 @@ export default function TicketPage() {
   const [email, setEmail] = useState('');
   const [ticketNumber, setTicketNumber] = useState<number | null>(null);
   const [currentTicket, setCurrentTicket] = useState<number | null>(null);
+  const [peopleBeforeYou, setPeopleBeforeYou] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
-  const loadCurrentTicket = async () => {
+  const loadQueuePosition = async () => {
+    if (!ticketNumber) return;
+    
     try {
       const calledTicket = await SupabaseQueueManager.getCalledTicket();
       if (calledTicket) {
@@ -22,25 +25,37 @@ export default function TicketPage() {
       } else {
         setCurrentTicket(null);
       }
+
+      // Get waiting queue to calculate position
+      const waitingQueue = await SupabaseQueueManager.getWaitingQueue();
+      const myTicket = waitingQueue.find(t => t.ticketNumber === ticketNumber);
+      
+      if (myTicket) {
+        // Count how many people are before me
+        const beforeMe = waitingQueue.filter(t => t.ticketNumber < ticketNumber).length;
+        setPeopleBeforeYou(beforeMe);
+      } else {
+        setPeopleBeforeYou(null);
+      }
     } catch (err) {
-      console.error('Failed to load current ticket:', err);
+      console.error('Failed to load queue position:', err);
     }
   };
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadCurrentTicket();
+    await loadQueuePosition();
     setRefreshing(false);
   };
 
   useEffect(() => {
     if (ticketNumber) {
-      // Load initial current ticket
-      loadCurrentTicket();
+      // Load initial queue position
+      loadQueuePosition();
 
       // Set up real-time subscription to refresh when queue changes
       const unsubscribe = SupabaseQueueManager.subscribeToQueue(() => {
-        loadCurrentTicket();
+        loadQueuePosition();
       });
 
       return () => {
@@ -71,14 +86,21 @@ export default function TicketPage() {
           <div className="card text-center">
             <div className="mb-6">
               <h1 className="text-2xl font-bold mb-2">Your Ticket</h1>
-              <div className="text-6xl font-bold my-8">{ticketNumber}</div>
+              <div className="text-6xl font-bold my-8">#{ticketNumber}</div>
             </div>
             
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Currently Calling:</p>
+              <p className="text-sm text-gray-600 mb-1">The number of people before you</p>
               <p className="text-2xl font-bold">
-                {currentTicket ? `#${currentTicket}` : 'None'}
+                {peopleBeforeYou !== null ? peopleBeforeYou : '-'}
               </p>
+              {peopleBeforeYou === 1 && (
+                <div className="mt-3 p-2 bg-yellow-50 rounded border border-yellow-200">
+                  <p className="text-sm text-yellow-700 font-medium">
+                    ⚠️ Please come to our booth 1D-B32 soon if it is 1 only
+                  </p>
+                </div>
+              )}
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
