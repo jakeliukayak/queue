@@ -12,6 +12,7 @@ export default function SearchPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [results, setResults] = useState<QueueItemWithPosition[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
 
@@ -34,6 +35,10 @@ export default function SearchPage() {
     setError('');
     setSearched(true);
 
+    await performSearch();
+  };
+
+  const performSearch = async () => {
     try {
       const tickets = await SupabaseQueueManager.searchByPhone(phoneNumber);
       
@@ -52,7 +57,13 @@ export default function SearchPage() {
       setResults([]);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await performSearch();
   };
 
   const getStatusBadge = (status: string) => {
@@ -108,7 +119,16 @@ export default function SearchPage() {
 
           {searched && (
             <div className="border-t pt-6">
-              <h2 className="text-xl font-bold mb-4">Search Results</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Search Results</h2>
+                <button
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 flex items-center gap-1"
+                >
+                  🔄 {refreshing ? 'Refreshing...' : 'Refresh'}
+                </button>
+              </div>
               
               {results.length === 0 ? (
                 <div className="text-center py-8">
@@ -153,11 +173,18 @@ export default function SearchPage() {
                         {result.position !== null && (
                           <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
                             <p className="text-sm text-blue-600 font-medium">
-                              Current Position in Queue
+                              The number of people before you
                             </p>
                             <p className="text-3xl font-bold text-blue-700">
-                              #{result.position}
+                              {result.position - 1}
                             </p>
+                            {result.position === 1 && (
+                              <div className="mt-3 p-2 bg-yellow-50 rounded border border-yellow-200">
+                                <p className="text-sm text-yellow-700 font-medium">
+                                  ⚠️ Please come to our booth 1D-B32 soon if it is 1 only
+                                </p>
+                              </div>
+                            )}
                           </div>
                         )}
 

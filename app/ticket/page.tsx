@@ -113,7 +113,7 @@ export default function TicketPage() {
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Your full name"
+                placeholder="Enter your full name"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               />
@@ -128,7 +128,7 @@ export default function TicketPage() {
                 id="phoneNumber"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="(123) 456-7890"
+                placeholder="Enter your phone number"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               />
@@ -143,7 +143,7 @@ export default function TicketPage() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your.email@example.com"
+                placeholder="Enter your email"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               />
@@ -154,6 +154,10 @@ export default function TicketPage() {
                 {error}
               </div>
             )}
+
+            <div className="text-xs text-gray-600 text-center py-2">
+              By signing up, you agree to receive updates from MT2.0 and consent to the use of personal data for the purpose of this web page.
+            </div>
 
             <button
               type="submit"
