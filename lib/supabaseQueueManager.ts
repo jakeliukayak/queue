@@ -181,11 +181,18 @@ export class SupabaseQueueManager {
       }
     }
 
-    // Remove the called ticket after a brief delay to allow UI updates
-    const TICKET_REMOVAL_DELAY_MS = 1000;
+    // Mark the called ticket as completed after a brief delay to allow UI updates
+    const TICKET_COMPLETION_DELAY_MS = 1000;
     setTimeout(async () => {
-      await this.removeTicket(nextTicket.id);
-    }, TICKET_REMOVAL_DELAY_MS);
+      try {
+        const success = await this.updateTicketStatus(nextTicket.id, 'completed');
+        if (!success) {
+          console.error('Failed to mark ticket as completed');
+        }
+      } catch (error) {
+        console.error('Failed to mark ticket as completed:', error);
+      }
+    }, TICKET_COMPLETION_DELAY_MS);
 
     return followingTicket;
   }
